@@ -1,12 +1,119 @@
-// Update this page (the content is just a fallback if you fail to update the page)
+import { Link } from "react-router-dom";
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
+import { Button } from "@/components/ui/button";
+import { Ruler, Palette, Sparkles } from "lucide-react";
+import fashionHero from "@/assets/fashion-hero.jpg";
 
 const Index = () => {
   return (
-    <div className="flex min-h-screen items-center justify-center bg-background">
-      <div className="text-center">
-        <h1 className="mb-4 text-4xl font-bold">Welcome to Your Blank App</h1>
-        <p className="text-xl text-muted-foreground">Start building your amazing project here!</p>
-      </div>
+    <div className="min-h-screen bg-background">
+      {/* Hero Section */}
+      <section className="relative overflow-hidden">
+        <div className="absolute inset-0 bg-gradient-hero opacity-95" />
+        <div 
+          className="absolute inset-0 bg-cover bg-center"
+          style={{ backgroundImage: `url(${fashionHero})` }}
+        />
+        
+        <div className="relative z-10 container mx-auto px-4 py-32">
+          <div className="text-center text-primary-foreground">
+            <div className="flex justify-center mb-6">
+              <Sparkles className="w-16 h-16 text-luxury-gold animate-pulse" />
+            </div>
+            <h1 className="text-6xl md:text-8xl font-bold mb-6 tracking-tight">
+              Fashion
+              <span className="bg-gradient-luxury bg-clip-text text-transparent"> Forward</span>
+            </h1>
+            <p className="text-xl md:text-2xl font-light opacity-90 max-w-2xl mx-auto">
+              Discover your perfect fit and colors with our AI-powered fashion technology
+            </p>
+          </div>
+        </div>
+      </section>
+
+      {/* Feature Cards Section */}
+      <section className="py-20 px-4">
+        <div className="container mx-auto max-w-6xl">
+          <div className="grid md:grid-cols-2 gap-8">
+            
+            {/* T-shirt Size Prediction Card */}
+            <Card className="group hover:shadow-luxury transition-all duration-500 transform hover:-translate-y-2 bg-card border-0 overflow-hidden">
+              <div className="absolute inset-0 bg-gradient-fashion opacity-0 group-hover:opacity-10 transition-opacity duration-500" />
+              <CardHeader className="relative z-10 text-center pb-6">
+                <div className="flex justify-center mb-4">
+                  <div className="p-4 rounded-full bg-primary/10 group-hover:bg-primary/20 transition-colors duration-300">
+                    <Ruler className="w-12 h-12 text-primary group-hover:scale-110 transition-transform duration-300" />
+                  </div>
+                </div>
+                <CardTitle className="text-3xl font-bold text-foreground">
+                  Perfect Fit Finder
+                </CardTitle>
+                <CardDescription className="text-lg text-muted-foreground mt-2">
+                  Get your ideal t-shirt size with our advanced AI sizing technology
+                </CardDescription>
+              </CardHeader>
+              <CardContent className="relative z-10 text-center pb-8">
+                <p className="text-muted-foreground mb-6 leading-relaxed">
+                  Say goodbye to ill-fitting clothes. Our smart sizing algorithm analyzes your measurements 
+                  and preferences to recommend the perfect t-shirt size every time. Get accurate results 
+                  in seconds and shop with confidence.
+                </p>
+                <Link to="/size-prediction">
+                  <Button 
+                    size="lg" 
+                    className="bg-primary hover:bg-primary/90 text-primary-foreground px-8 py-3 text-lg font-semibold group-hover:shadow-lg transition-all duration-300"
+                  >
+                    Find My Size
+                  </Button>
+                </Link>
+              </CardContent>
+            </Card>
+
+            {/* Personal Color Analysis Card */}
+            <Card className="group hover:shadow-luxury transition-all duration-500 transform hover:-translate-y-2 bg-card border-0 overflow-hidden">
+              <div className="absolute inset-0 bg-gradient-luxury opacity-0 group-hover:opacity-10 transition-opacity duration-500" />
+              <CardHeader className="relative z-10 text-center pb-6">
+                <div className="flex justify-center mb-4">
+                  <div className="p-4 rounded-full bg-accent/10 group-hover:bg-accent/20 transition-colors duration-300">
+                    <Palette className="w-12 h-12 text-accent group-hover:scale-110 transition-transform duration-300" />
+                  </div>
+                </div>
+                <CardTitle className="text-3xl font-bold text-foreground">
+                  Color Harmony
+                </CardTitle>
+                <CardDescription className="text-lg text-muted-foreground mt-2">
+                  Discover your personal color palette that makes you look stunning
+                </CardDescription>
+              </CardHeader>
+              <CardContent className="relative z-10 text-center pb-8">
+                <p className="text-muted-foreground mb-6 leading-relaxed">
+                  Unlock the colors that complement your skin tone, eye color, and hair. Our personal 
+                  color analysis reveals your perfect palette, helping you choose clothes that enhance 
+                  your natural beauty and boost your confidence.
+                </p>
+                <Link to="/color-analysis">
+                  <Button 
+                    size="lg" 
+                    className="bg-accent hover:bg-accent/90 text-accent-foreground px-8 py-3 text-lg font-semibold group-hover:shadow-lg transition-all duration-300"
+                  >
+                    Discover My Colors
+                  </Button>
+                </Link>
+              </CardContent>
+            </Card>
+
+          </div>
+        </div>
+      </section>
+
+      {/* Footer */}
+      <footer className="py-12 border-t border-border">
+        <div className="container mx-auto px-4 text-center">
+          <p className="text-muted-foreground">
+            © 2024 Fashion Forward. Elevating your style with technology.
+          </p>
+        </div>
+      </footer>
     </div>
   );
 };

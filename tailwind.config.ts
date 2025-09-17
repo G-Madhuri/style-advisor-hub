@@ -47,6 +47,11 @@ export default {
           DEFAULT: "hsl(var(--card))",
           foreground: "hsl(var(--card-foreground))",
         },
+        // Fashion theme colors
+        "luxury-gold": "hsl(var(--luxury-gold))",
+        "deep-purple": "hsl(var(--deep-purple))",
+        "soft-cream": "hsl(var(--soft-cream))",
+        "elegant-gray": "hsl(var(--elegant-gray))",
         sidebar: {
           DEFAULT: "hsl(var(--sidebar-background))",
           foreground: "hsl(var(--sidebar-foreground))",
@@ -57,6 +62,15 @@ export default {
           border: "hsl(var(--sidebar-border))",
           ring: "hsl(var(--sidebar-ring))",
         },
+      },
+      backgroundImage: {
+        "gradient-fashion": "var(--gradient-fashion)",
+        "gradient-luxury": "var(--gradient-luxury)",
+        "gradient-hero": "var(--gradient-hero)",
+      },
+      boxShadow: {
+        "luxury": "var(--shadow-luxury)",
+        "card": "var(--shadow-card)",
       },
       borderRadius: {
         lg: "var(--radius)",

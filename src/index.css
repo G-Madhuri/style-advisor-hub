@@ -8,35 +8,51 @@ All colors MUST be HSL.
 
 @layer base {
   :root {
-    --background: 0 0% 100%;
-    --foreground: 222.2 84% 4.9%;
+    /* Fashion Theme - Elegant & Luxurious */
+    --background: 35 25% 97%;
+    --foreground: 270 15% 15%;
 
     --card: 0 0% 100%;
-    --card-foreground: 222.2 84% 4.9%;
+    --card-foreground: 270 15% 15%;
 
     --popover: 0 0% 100%;
-    --popover-foreground: 222.2 84% 4.9%;
+    --popover-foreground: 270 15% 15%;
 
-    --primary: 222.2 47.4% 11.2%;
-    --primary-foreground: 210 40% 98%;
+    --primary: 270 55% 25%;
+    --primary-foreground: 35 25% 97%;
 
-    --secondary: 210 40% 96.1%;
-    --secondary-foreground: 222.2 47.4% 11.2%;
+    --secondary: 35 20% 92%;
+    --secondary-foreground: 270 15% 25%;
 
-    --muted: 210 40% 96.1%;
-    --muted-foreground: 215.4 16.3% 46.9%;
+    --muted: 35 15% 94%;
+    --muted-foreground: 270 10% 45%;
 
-    --accent: 210 40% 96.1%;
-    --accent-foreground: 222.2 47.4% 11.2%;
+    --accent: 45 85% 65%;
+    --accent-foreground: 270 25% 15%;
 
     --destructive: 0 84.2% 60.2%;
     --destructive-foreground: 210 40% 98%;
 
-    --border: 214.3 31.8% 91.4%;
-    --input: 214.3 31.8% 91.4%;
-    --ring: 222.2 84% 4.9%;
+    --border: 35 15% 87%;
+    --input: 35 15% 90%;
+    --ring: 270 55% 35%;
 
-    --radius: 0.5rem;
+    /* Fashion-specific tokens */
+    --luxury-gold: 45 85% 65%;
+    --deep-purple: 270 55% 25%;
+    --soft-cream: 35 25% 97%;
+    --elegant-gray: 270 10% 45%;
+    
+    /* Gradients */
+    --gradient-fashion: linear-gradient(135deg, hsl(270 55% 25%), hsl(270 45% 35%));
+    --gradient-luxury: linear-gradient(135deg, hsl(45 85% 65%), hsl(45 75% 55%));
+    --gradient-hero: linear-gradient(135deg, hsl(270 55% 25%) 0%, hsl(270 45% 35%) 50%, hsl(45 85% 65%) 100%);
+    
+    /* Shadows */
+    --shadow-luxury: 0 20px 40px -10px hsl(270 55% 25% / 0.3);
+    --shadow-card: 0 10px 30px -5px hsl(270 25% 50% / 0.15);
+    
+    --radius: 0.75rem;
 
     --sidebar-background: 0 0% 98%;
 
