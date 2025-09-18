@@ -8,11 +8,15 @@ const Index = () => {
   return (
     <div className="min-h-screen bg-background">
       {/* Hero Section */}
-      <section className="relative overflow-hidden">
+      <section className="relative overflow-hidden min-h-screen">
         <div className="absolute inset-0 bg-gradient-hero opacity-95" />
         <div 
-          className="absolute inset-0 bg-cover bg-center"
-          style={{ backgroundImage: `url(${fashionHero})` }}
+          className="absolute inset-0 bg-cover bg-center bg-no-repeat"
+          style={{ 
+            backgroundImage: `url(${fashionHero})`,
+            backgroundSize: 'cover',
+            backgroundPosition: 'center center'
+          }}
         />
         
         <div className="relative z-10 container mx-auto px-4 py-16 sm:py-24 lg:py-32">
