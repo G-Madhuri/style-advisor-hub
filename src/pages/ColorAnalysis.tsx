@@ -61,30 +61,31 @@ const ColorAnalysis = () => {
     <div className="min-h-screen bg-background">
       {/* Header */}
       <header className="border-b border-border bg-card">
-        <div className="container mx-auto px-4 py-6">
-          <div className="flex items-center gap-4">
+        <div className="container mx-auto px-4 py-4 sm:py-6">
+          <div className="flex items-center gap-2 sm:gap-4">
             <Link to="/">
               <Button variant="ghost" size="sm" className="gap-2">
                 <ArrowLeft className="w-4 h-4" />
-                Back to Home
+                <span className="hidden sm:inline">Back to Home</span>
+                <span className="sm:hidden">Back</span>
               </Button>
             </Link>
             <div className="flex items-center gap-2">
-              <Palette className="w-6 h-6 text-accent" />
-              <h1 className="text-2xl font-bold text-foreground">Personal Color Analysis</h1>
+              <Palette className="w-5 h-5 sm:w-6 sm:h-6 text-accent" />
+              <h1 className="text-lg sm:text-2xl font-bold text-foreground">Personal Color Analysis</h1>
             </div>
           </div>
         </div>
       </header>
 
-      <div className="container mx-auto px-4 py-12">
+      <div className="container mx-auto px-4 py-6 sm:py-12">
         <div className="max-w-2xl mx-auto">
           
           {!showResult ? (
             <Card className="shadow-card">
               <CardHeader className="text-center">
-                <CardTitle className="text-3xl font-bold">Discover Your Perfect Colors</CardTitle>
-                <CardDescription className="text-lg">
+                <CardTitle className="text-2xl sm:text-3xl font-bold">Discover Your Perfect Colors</CardTitle>
+                <CardDescription className="text-base sm:text-lg">
                   Tell us about your natural features to find your ideal color palette
                 </CardDescription>
               </CardHeader>
@@ -166,18 +167,18 @@ const ColorAnalysis = () => {
                 <div className="flex justify-center mb-4">
                   <Sparkles className="w-16 h-16 text-accent" />
                 </div>
-                <CardTitle className="text-4xl font-bold text-accent capitalize">
+                <CardTitle className="text-3xl sm:text-4xl font-bold text-accent capitalize">
                   You're a {season}!
                 </CardTitle>
-                <CardDescription className="text-lg">
+                <CardDescription className="text-base sm:text-lg">
                   Here are your perfect colors that will make you glow
                 </CardDescription>
               </CardHeader>
               
               <CardContent className="space-y-6">
-                <div className="bg-accent/10 rounded-lg p-6">
-                  <h3 className="text-xl font-semibold text-foreground mb-4 text-center">Your Color Palette</h3>
-                  <div className="grid grid-cols-3 gap-3">
+                <div className="bg-accent/10 rounded-lg p-4 sm:p-6">
+                  <h3 className="text-lg sm:text-xl font-semibold text-foreground mb-4 text-center">Your Color Palette</h3>
+                  <div className="grid grid-cols-2 sm:grid-cols-3 gap-3">
                     {colorPalette.map((color, index) => (
                       <div 
                         key={index}
@@ -223,7 +224,7 @@ const ColorAnalysis = () => {
                   </ul>
                 </div>
 
-                <div className="flex gap-4">
+                <div className="flex flex-col sm:flex-row gap-4">
                   <Button 
                     onClick={() => setShowResult(false)} 
                     variant="outline" 

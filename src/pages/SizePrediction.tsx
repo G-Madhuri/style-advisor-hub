@@ -64,23 +64,24 @@ const SizePrediction = () => {
     <div className="min-h-screen bg-background">
       {/* Header */}
       <header className="border-b border-border bg-card">
-        <div className="container mx-auto px-4 py-6">
-          <div className="flex items-center gap-4">
+        <div className="container mx-auto px-4 py-4 sm:py-6">
+          <div className="flex items-center gap-2 sm:gap-4">
             <Link to="/">
               <Button variant="ghost" size="sm" className="gap-2">
                 <ArrowLeft className="w-4 h-4" />
-                Back to Home
+                <span className="hidden sm:inline">Back to Home</span>
+                <span className="sm:hidden">Back</span>
               </Button>
             </Link>
             <div className="flex items-center gap-2">
-              <Ruler className="w-6 h-6 text-primary" />
-              <h1 className="text-2xl font-bold text-foreground">T-Shirt Size Prediction</h1>
+              <Ruler className="w-5 h-5 sm:w-6 sm:h-6 text-primary" />
+              <h1 className="text-lg sm:text-2xl font-bold text-foreground">T-Shirt Size Prediction</h1>
             </div>
           </div>
         </div>
       </header>
 
-      <div className="container mx-auto px-4 py-12">
+      <div className="container mx-auto px-4 py-6 sm:py-12">
         <div className="max-w-4xl mx-auto">
           
           <Tabs defaultValue="camera" className="w-full">
@@ -103,14 +104,14 @@ const SizePrediction = () => {
               {!showResult ? (
                 <Card className="shadow-card">
                   <CardHeader className="text-center">
-                    <CardTitle className="text-3xl font-bold">Find Your Perfect Fit</CardTitle>
-                    <CardDescription className="text-lg">
+                    <CardTitle className="text-2xl sm:text-3xl font-bold">Find Your Perfect Fit</CardTitle>
+                    <CardDescription className="text-base sm:text-lg">
                       Enter your measurements below and we'll predict your ideal t-shirt size
                     </CardDescription>
                   </CardHeader>
                   
                   <CardContent className="space-y-6">
-                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                       <div className="space-y-2">
                         <Label htmlFor="height" className="text-sm font-medium">Height (cm) *</Label>
                         <Input
@@ -174,16 +175,16 @@ const SizePrediction = () => {
                     <div className="flex justify-center mb-4">
                       <CheckCircle className="w-16 h-16 text-primary" />
                     </div>
-                    <CardTitle className="text-4xl font-bold text-primary">Your Perfect Size</CardTitle>
-                    <CardDescription className="text-lg">
+                    <CardTitle className="text-3xl sm:text-4xl font-bold text-primary">Your Perfect Size</CardTitle>
+                    <CardDescription className="text-base sm:text-lg">
                       Based on your measurements and body type
                     </CardDescription>
                   </CardHeader>
                   
                   <CardContent className="text-center space-y-6">
-                    <div className="bg-primary/10 rounded-lg p-8">
-                      <div className="text-6xl font-bold text-primary mb-2">{predictedSize}</div>
-                      <p className="text-lg text-muted-foreground">Recommended Size</p>
+                    <div className="bg-primary/10 rounded-lg p-6 sm:p-8">
+                      <div className="text-4xl sm:text-6xl font-bold text-primary mb-2">{predictedSize}</div>
+                      <p className="text-base sm:text-lg text-muted-foreground">Recommended Size</p>
                     </div>
                     
                     <div className="space-y-3 text-left bg-muted/50 rounded-lg p-6">
@@ -196,7 +197,7 @@ const SizePrediction = () => {
                       </ul>
                     </div>
 
-                    <div className="flex gap-4">
+                    <div className="flex flex-col sm:flex-row gap-4">
                       <Button 
                         onClick={() => setShowResult(false)} 
                         variant="outline" 

@@ -15,16 +15,16 @@ const Index = () => {
           style={{ backgroundImage: `url(${fashionHero})` }}
         />
         
-        <div className="relative z-10 container mx-auto px-4 py-32">
+        <div className="relative z-10 container mx-auto px-4 py-16 sm:py-24 lg:py-32">
           <div className="text-center text-primary-foreground">
-            <div className="flex justify-center mb-6">
-              <Sparkles className="w-16 h-16 text-luxury-gold animate-pulse" />
+            <div className="flex justify-center mb-4 sm:mb-6">
+              <Sparkles className="w-12 h-12 sm:w-16 sm:h-16 text-luxury-gold animate-pulse" />
             </div>
-            <h1 className="text-6xl md:text-8xl font-bold mb-6 tracking-tight">
+            <h1 className="text-4xl sm:text-6xl lg:text-8xl font-bold mb-4 sm:mb-6 tracking-tight">
               Fashion
               <span className="bg-gradient-luxury bg-clip-text text-transparent"> Forward</span>
             </h1>
-            <p className="text-xl md:text-2xl font-light opacity-90 max-w-2xl mx-auto">
+            <p className="text-lg sm:text-xl lg:text-2xl font-light opacity-90 max-w-2xl mx-auto px-4">
               Discover your perfect fit and colors with our AI-powered fashion technology
             </p>
           </div>
@@ -32,9 +32,9 @@ const Index = () => {
       </section>
 
       {/* Feature Cards Section */}
-      <section className="py-20 px-4">
+      <section className="py-12 sm:py-16 lg:py-20 px-4">
         <div className="container mx-auto max-w-6xl">
-          <div className="grid md:grid-cols-2 gap-8">
+          <div className="grid md:grid-cols-2 gap-6 lg:gap-8">
             
             {/* T-shirt Size Prediction Card */}
             <Card className="group hover:shadow-luxury transition-all duration-500 transform hover:-translate-y-2 bg-card border-0 overflow-hidden">
@@ -45,10 +45,10 @@ const Index = () => {
                     <Ruler className="w-12 h-12 text-primary group-hover:scale-110 transition-transform duration-300" />
                   </div>
                 </div>
-                <CardTitle className="text-3xl font-bold text-foreground">
+                <CardTitle className="text-2xl sm:text-3xl font-bold text-foreground">
                   Perfect Fit Finder
                 </CardTitle>
-                <CardDescription className="text-lg text-muted-foreground mt-2">
+                <CardDescription className="text-base sm:text-lg text-muted-foreground mt-2">
                   Get your ideal t-shirt size with our advanced AI sizing technology
                 </CardDescription>
               </CardHeader>
@@ -78,10 +78,10 @@ const Index = () => {
                     <Palette className="w-12 h-12 text-accent group-hover:scale-110 transition-transform duration-300" />
                   </div>
                 </div>
-                <CardTitle className="text-3xl font-bold text-foreground">
+                <CardTitle className="text-2xl sm:text-3xl font-bold text-foreground">
                   Color Harmony
                 </CardTitle>
-                <CardDescription className="text-lg text-muted-foreground mt-2">
+                <CardDescription className="text-base sm:text-lg text-muted-foreground mt-2">
                   Discover your personal color palette that makes you look stunning
                 </CardDescription>
               </CardHeader>
