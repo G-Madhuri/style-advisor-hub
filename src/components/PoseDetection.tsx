@@ -23,7 +23,8 @@ const PoseDetection = () => {
   const [isStable, setIsStable] = useState(false);
   const [finalMeasurements, setFinalMeasurements] = useState<MeasurementData | null>(null);
   const [stabilityBuffer, setStabilityBuffer] = useState<number[]>([]);
-  const [lastMovementTime, setLastMovementTime] = useState(Date.now());
+  const lastMovementTimeRef = useRef(Date.now());
+  const [timeRemaining, setTimeRemaining] = useState<number>(0);
 
   // Constants from your Python code
   const F = 500; // Camera focal length approximation
@@ -127,8 +128,14 @@ const PoseDetection = () => {
       // Check for stability
       if (checkStability(newBuffer)) {
         const now = Date.now();
-        if (now - lastMovementTime > STABILITY_DURATION) {
-          console.log("Stable measurements detected!");
+        const timeSinceLastMovement = now - lastMovementTimeRef.current;
+        const remaining = Math.max(0, STABILITY_DURATION - timeSinceLastMovement);
+        setTimeRemaining(remaining);
+        
+        console.log(`Stable! Time since last movement: ${timeSinceLastMovement}ms, Remaining: ${remaining}ms`);
+        
+        if (timeSinceLastMovement > STABILITY_DURATION) {
+          console.log("Locking measurements - stillness detected for 2+ seconds!");
           const predictedSize = estimateSize(shoulderWidth + 2, torsoHeight); // Add 2 to shoulder
           const finalData: MeasurementData = {
             distance,
@@ -141,7 +148,9 @@ const PoseDetection = () => {
           console.log(`Locked: Shoulder=${shoulderWidth.toFixed(1)}, Torso=${torsoHeight.toFixed(1)}, Size=${predictedSize}`);
         }
       } else {
-        setLastMovementTime(Date.now());
+        lastMovementTimeRef.current = Date.now();
+        setTimeRemaining(STABILITY_DURATION);
+        console.log("Movement detected - resetting stability timer");
       }
 
       // Update current measurements
@@ -219,7 +228,8 @@ const PoseDetection = () => {
     setFinalMeasurements(null);
     setMeasurements(null);
     setStabilityBuffer([]);
-    setLastMovementTime(Date.now());
+    lastMovementTimeRef.current = Date.now();
+    setTimeRemaining(STABILITY_DURATION);
   };
 
   return (
@@ -279,6 +289,11 @@ const PoseDetection = () => {
               <li>• Make sure your full torso is visible (shoulders to hips)</li>
               <li>• Stay still for 2 seconds to lock in measurements</li>
               <li>• Move back if you see a warning message</li>
+              {timeRemaining > 0 && timeRemaining < STABILITY_DURATION && (
+                <li className="text-primary font-semibold">
+                  • Hold still for {Math.ceil(timeRemaining / 1000)} more seconds...
+                </li>
+              )}
             </ul>
           </div>
 
