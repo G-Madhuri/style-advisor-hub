@@ -8,12 +8,13 @@ export interface SizeRange {
 
 // Size chart data (equivalent to your CSV file)
 export const sizeChart: SizeRange[] = [
-  { size: "XS", shoulderMinCm: 38, shoulderMaxCm: 41, torsoMinCm: 58, torsoMaxCm: 63 },
-  { size: "S", shoulderMinCm: 41, shoulderMaxCm: 44, torsoMinCm: 63, torsoMaxCm: 68 },
-  { size: "M", shoulderMinCm: 44, shoulderMaxCm: 47, torsoMinCm: 68, torsoMaxCm: 73 },
-  { size: "L", shoulderMinCm: 47, shoulderMaxCm: 50, torsoMinCm: 73, torsoMaxCm: 78 },
-  { size: "XL", shoulderMinCm: 50, shoulderMaxCm: 53, torsoMinCm: 78, torsoMaxCm: 83 },
-  { size: "XXL", shoulderMinCm: 53, shoulderMaxCm: 57, torsoMinCm: 83, torsoMaxCm: 88 }
+  { size: "XS", shoulderMinCm: 38.0, shoulderMaxCm: 40.0, torsoMinCm: 48.0, torsoMaxCm: 50.0 },
+  { size: "S", shoulderMinCm: 40.0, shoulderMaxCm: 42.0, torsoMinCm: 50.0, torsoMaxCm: 52.0 },
+  { size: "M", shoulderMinCm: 42.0, shoulderMaxCm: 44.0, torsoMinCm: 52.0, torsoMaxCm: 54.0 },
+  { size: "L", shoulderMinCm: 44.0, shoulderMaxCm: 46.0, torsoMinCm: 54.0, torsoMaxCm: 56.0 },
+  { size: "XL", shoulderMinCm: 46.0, shoulderMaxCm: 48.0, torsoMinCm: 56.0, torsoMaxCm: 58.0 },
+  { size: "XXL", shoulderMinCm: 48.0, shoulderMaxCm: 50.0, torsoMinCm: 58.0, torsoMaxCm: 60.0 },
+  { size: "XXXL", shoulderMinCm: 50.0, shoulderMaxCm: 52.0, torsoMinCm: 60.0, torsoMaxCm: 62.0 },
 ];
 
 export const estimateSize = (shoulder: number, torso: number, tolerance: number = 4.0): string => {
