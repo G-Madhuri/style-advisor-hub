@@ -28,7 +28,7 @@ const PoseDetection = () => {
   // Constants from your Python code
   const F = 500; // Camera focal length approximation
   const REAL_EYE_DIST = 6.3; // Average eye distance in cm
-  const SCALING_FACTOR = 1.425;
+  const SCALING_FACTOR = 1.48;
   const STABILITY_TOLERANCE = 3.0;
   const STABILITY_DURATION = 2000; // 2 seconds
 
@@ -129,7 +129,7 @@ const PoseDetection = () => {
         const now = Date.now();
         if (now - lastMovementTime > STABILITY_DURATION) {
           console.log("Stable measurements detected!");
-          const predictedSize = estimateSize(shoulderWidth, torsoHeight);
+          const predictedSize = estimateSize(shoulderWidth + 2, torsoHeight); // Add 2 to shoulder
           const finalData: MeasurementData = {
             distance,
             shoulderWidth,
