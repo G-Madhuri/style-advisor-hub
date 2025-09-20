@@ -30,18 +30,18 @@ const PoseDetection = () => {
   const F = 500; // Camera focal length approximation
   const REAL_EYE_DIST = 6.3; // Average eye distance in cm
   const SCALING_FACTOR = 1.48;
-  const STABILITY_TOLERANCE = 3.0;
+  const STABILITY_TOLERANCE = 5.0; // Loosened tolerance to reduce false negatives
   const STABILITY_DURATION = 2000; // 2 seconds
 
   const checkStability = (measurements: number[], tolerance = STABILITY_TOLERANCE): boolean => {
-    if (measurements.length < 8) return false;
+    if (measurements.length < 6) return false;
     
-    const recent = measurements.slice(-8);
+    const recent = measurements.slice(-6);
     const avg = recent.reduce((sum, val) => sum + val, 0) / recent.length;
     const variance = recent.reduce((sum, val) => sum + Math.pow(val - avg, 2), 0) / recent.length;
     const stdDev = Math.sqrt(variance);
     
-    console.log(`Stability check: StdDev=${stdDev.toFixed(2)}, Tolerance=${tolerance}`);
+    console.log(`Stability check: StdDev=${stdDev.toFixed(2)}, Tolerance=${tolerance}, Samples=${recent.length}`);
     return stdDev < tolerance;
   };
 
@@ -122,7 +122,8 @@ const PoseDetection = () => {
       const torsoHeight = (pixelTorsoHeight * distance) / F;
 
       // Update stability buffer
-      const newBuffer = [...stabilityBuffer, shoulderWidth].slice(-10);
+      const quantizedShoulder = Math.round(shoulderWidth * 2) / 2; // 0.5 cm steps to reduce noise
+      const newBuffer = [...stabilityBuffer, quantizedShoulder].slice(-10);
       setStabilityBuffer(newBuffer);
 
       // Check for stability
