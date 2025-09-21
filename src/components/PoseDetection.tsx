@@ -6,7 +6,8 @@ import { estimateSize } from '@/data/sizeChart';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
-import { Camera as CameraIcon, RotateCcw, CheckCircle } from 'lucide-react';
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter } from '@/components/ui/dialog';
+import { Camera as CameraIcon, RotateCcw, CheckCircle, Trophy, RotateCcw as TryAgainIcon } from 'lucide-react';
 
 interface MeasurementData {
   distance: number;
@@ -23,6 +24,7 @@ const PoseDetection = () => {
   const [isStable, setIsStable] = useState(false);
   const [finalMeasurements, setFinalMeasurements] = useState<MeasurementData | null>(null);
   const [stabilityBuffer, setStabilityBuffer] = useState<number[]>([]);
+  const [showResultDialog, setShowResultDialog] = useState(false);
   const lastMovementTimeRef = useRef(Date.now());
   const [timeRemaining, setTimeRemaining] = useState<number>(0);
 
@@ -146,6 +148,7 @@ const PoseDetection = () => {
           };
           setFinalMeasurements(finalData);
           setIsStable(true);
+          setShowResultDialog(true);
           console.log(`Locked: Shoulder=${shoulderWidth.toFixed(1)}, Torso=${torsoHeight.toFixed(1)}, Size=${predictedSize}`);
         }
       } else {
@@ -229,8 +232,19 @@ const PoseDetection = () => {
     setFinalMeasurements(null);
     setMeasurements(null);
     setStabilityBuffer([]);
+    setShowResultDialog(false);
     lastMovementTimeRef.current = Date.now();
     setTimeRemaining(STABILITY_DURATION);
+  };
+
+  const handleTryAgain = () => {
+    setShowResultDialog(false);
+    reset();
+  };
+
+  const handleUseSize = () => {
+    setShowResultDialog(false);
+    // Could navigate back to parent or perform other actions
   };
 
   return (
@@ -322,42 +336,58 @@ const PoseDetection = () => {
             </div>
           )}
 
-          {/* Final results */}
-          {isStable && finalMeasurements && (
-            <Card className="border-primary/20 bg-primary/5">
-              <CardHeader>
-                <CardTitle className="flex items-center gap-2 text-primary">
-                  <CheckCircle className="w-5 h-5" />
-                  Measurement Complete!
-                </CardTitle>
-              </CardHeader>
-              <CardContent>
-                <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-4">
+          {/* Dialog for final results */}
+          <Dialog open={showResultDialog} onOpenChange={setShowResultDialog}>
+            <DialogContent className="sm:max-w-md">
+              <DialogHeader>
+                <DialogTitle className="flex items-center gap-2 text-primary text-xl">
+                  <Trophy className="w-6 h-6" />
+                  Perfect! Your Size is Ready
+                </DialogTitle>
+              </DialogHeader>
+              
+              <div className="space-y-6">
+                {/* Predicted Size - Prominent Display */}
+                <div className="text-center py-6 bg-primary/5 rounded-lg">
+                  <div className="text-sm text-muted-foreground mb-2">Your Recommended Size</div>
+                  <Badge className="text-3xl py-3 px-6 bg-primary text-primary-foreground">
+                    {finalMeasurements?.predictedSize}
+                  </Badge>
+                </div>
+
+                {/* Measurements Grid */}
+                <div className="grid grid-cols-3 gap-4">
                   <div className="text-center">
-                    <div className="text-2xl font-bold text-primary">{Math.round(finalMeasurements.distance)}</div>
-                    <div className="text-sm text-muted-foreground">Distance (cm)</div>
+                    <div className="text-lg font-bold text-primary">{finalMeasurements ? Math.round(finalMeasurements.distance) : 0}</div>
+                    <div className="text-xs text-muted-foreground">Distance (cm)</div>
                   </div>
                   <div className="text-center">
-                    <div className="text-2xl font-bold text-primary">{finalMeasurements.shoulderWidth.toFixed(1)}</div>
-                    <div className="text-sm text-muted-foreground">Shoulder (cm)</div>
+                    <div className="text-lg font-bold text-primary">{finalMeasurements?.shoulderWidth.toFixed(1)}</div>
+                    <div className="text-xs text-muted-foreground">Shoulder (cm)</div>
                   </div>
                   <div className="text-center">
-                    <div className="text-2xl font-bold text-primary">{finalMeasurements.torsoHeight.toFixed(1)}</div>
-                    <div className="text-sm text-muted-foreground">Torso (cm)</div>
-                  </div>
-                  <div className="text-center">
-                    <Badge className="text-2xl py-2 px-4 bg-primary">
-                      {finalMeasurements.predictedSize}
-                    </Badge>
-                    <div className="text-sm text-muted-foreground">Your Size</div>
+                    <div className="text-lg font-bold text-primary">{finalMeasurements?.torsoHeight.toFixed(1)}</div>
+                    <div className="text-xs text-muted-foreground">Torso (cm)</div>
                   </div>
                 </div>
-                <p className="text-center text-muted-foreground">
-                  Measurements locked after detecting stillness. Your recommended size is <strong>{finalMeasurements.predictedSize}</strong>.
+
+                <p className="text-center text-sm text-muted-foreground">
+                  Measurements locked after detecting stillness for 2 seconds.
                 </p>
-              </CardContent>
-            </Card>
-          )}
+              </div>
+
+              <DialogFooter className="flex-col sm:flex-row gap-2">
+                <Button variant="outline" onClick={handleTryAgain} className="flex-1">
+                  <TryAgainIcon className="w-4 h-4 mr-2" />
+                  Try Again
+                </Button>
+                <Button onClick={handleUseSize} className="flex-1">
+                  <CheckCircle className="w-4 h-4 mr-2" />
+                  Use This Size
+                </Button>
+              </DialogFooter>
+            </DialogContent>
+          </Dialog>
         </CardContent>
       </Card>
     </div>
