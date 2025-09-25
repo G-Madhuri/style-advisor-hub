@@ -27,24 +27,22 @@ const PoseDetection = () => {
   const [showResultDialog, setShowResultDialog] = useState(false);
   const lastMovementTimeRef = useRef(Date.now());
   const [timeRemaining, setTimeRemaining] = useState<number>(0);
-  const lastTempSizeRef = useRef<string | null>(null);
-  const sameTempSizeCountRef = useRef<number>(0);
 
   // Constants from your Python code
   const F = 500; // Camera focal length approximation
   const REAL_EYE_DIST = 6.3; // Average eye distance in cm
   const SCALING_FACTOR = 1.48;
-  const STABILITY_TOLERANCE = 3.0; // Match Python logic (more strict)
+  const STABILITY_TOLERANCE = 5.0; // Loosened tolerance to reduce false negatives
   const STABILITY_DURATION = 2000; // 2 seconds
 
   const checkStability = (measurements: number[], tolerance = STABILITY_TOLERANCE): boolean => {
-    if (measurements.length < 8) return false;
-
-    const recent = measurements.slice(-8);
+    if (measurements.length < 6) return false;
+    
+    const recent = measurements.slice(-6);
     const avg = recent.reduce((sum, val) => sum + val, 0) / recent.length;
     const variance = recent.reduce((sum, val) => sum + Math.pow(val - avg, 2), 0) / recent.length;
     const stdDev = Math.sqrt(variance);
-
+    
     console.log(`Stability check: StdDev=${stdDev.toFixed(2)}, Tolerance=${tolerance}, Samples=${recent.length}`);
     return stdDev < tolerance;
   };
@@ -125,8 +123,9 @@ const PoseDetection = () => {
       const pixelTorsoHeight = calculateDistance(shoulderMid, hipMid);
       const torsoHeight = (pixelTorsoHeight * distance) / F;
 
-      // Update stability buffer (use raw shoulder values similar to Python logic)
-      const newBuffer = [...stabilityBuffer, shoulderWidth].slice(-10);
+      // Update stability buffer
+      const quantizedShoulder = Math.round(shoulderWidth * 2) / 2; // 0.5 cm steps to reduce noise
+      const newBuffer = [...stabilityBuffer, quantizedShoulder].slice(-10);
       setStabilityBuffer(newBuffer);
 
       // Check for stability
@@ -139,28 +138,22 @@ const PoseDetection = () => {
         console.log(`Stable! Time since last movement: ${timeSinceLastMovement}ms, Remaining: ${remaining}ms`);
         
         if (timeSinceLastMovement > STABILITY_DURATION) {
-          if (sameTempSizeCountRef.current >= 5) {
-            console.log("Locking measurements - stillness 2s and size repeated 5 times");
-            const predictedSize = estimateSize(shoulderWidth + 2, torsoHeight); // Add 2 to shoulder
-            const finalData: MeasurementData = {
-              distance,
-              shoulderWidth,
-              torsoHeight,
-              predictedSize
-            };
-            setFinalMeasurements(finalData);
-            setIsStable(true);
-            setShowResultDialog(true);
-            console.log(`Locked: Shoulder=${shoulderWidth.toFixed(1)}, Torso=${torsoHeight.toFixed(1)}, Size=${predictedSize}`);
-          } else {
-            console.log(`Waiting: confirming size stability ${sameTempSizeCountRef.current}/5`);
-          }
+          console.log("Locking measurements - stillness detected for 2+ seconds!");
+          const predictedSize = estimateSize(shoulderWidth + 2, torsoHeight); // Add 2 to shoulder
+          const finalData: MeasurementData = {
+            distance,
+            shoulderWidth,
+            torsoHeight,
+            predictedSize
+          };
+          setFinalMeasurements(finalData);
+          setIsStable(true);
+          setShowResultDialog(true);
+          console.log(`Locked: Shoulder=${shoulderWidth.toFixed(1)}, Torso=${torsoHeight.toFixed(1)}, Size=${predictedSize}`);
         }
       } else {
         lastMovementTimeRef.current = Date.now();
         setTimeRemaining(STABILITY_DURATION);
-        sameTempSizeCountRef.current = 0;
-        lastTempSizeRef.current = null;
         console.log("Movement detected - resetting stability timer");
       }
 
@@ -172,15 +165,6 @@ const PoseDetection = () => {
         predictedSize: estimateSize(shoulderWidth, torsoHeight)
       };
       setMeasurements(currentMeasurements);
-
-      // Track consecutive identical temp sizes (lock after 5 times)
-      const tempSize = currentMeasurements.predictedSize;
-      if (lastTempSizeRef.current === tempSize) {
-        sameTempSizeCountRef.current += 1;
-      } else {
-        lastTempSizeRef.current = tempSize;
-        sameTempSizeCountRef.current = 1;
-      }
 
       // Draw measurements on canvas
       ctx.fillStyle = 'lime';
@@ -251,8 +235,6 @@ const PoseDetection = () => {
     setShowResultDialog(false);
     lastMovementTimeRef.current = Date.now();
     setTimeRemaining(STABILITY_DURATION);
-    lastTempSizeRef.current = null;
-    sameTempSizeCountRef.current = 0;
   };
 
   const handleTryAgain = () => {
