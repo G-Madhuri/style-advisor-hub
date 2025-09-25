@@ -27,6 +27,8 @@ const PoseDetection = () => {
   const [showResultDialog, setShowResultDialog] = useState(false);
   const lastMovementTimeRef = useRef(Date.now());
   const [timeRemaining, setTimeRemaining] = useState<number>(0);
+  const lastTempSizeRef = useRef<string | null>(null);
+  const sameTempSizeCountRef = useRef<number>(0);
 
   // Constants from your Python code
   const F = 500; // Camera focal length approximation
@@ -154,7 +156,9 @@ const PoseDetection = () => {
       } else {
         lastMovementTimeRef.current = Date.now();
         setTimeRemaining(STABILITY_DURATION);
-        console.log("Movement detected - resetting stability timer");
+        sameTempSizeCountRef.current = 0;
+        lastTempSizeRef.current = null;
+        console.log("Movement detected - resetting stability timer and temp size count");
       }
 
       // Update current measurements
@@ -165,6 +169,32 @@ const PoseDetection = () => {
         predictedSize: estimateSize(shoulderWidth, torsoHeight)
       };
       setMeasurements(currentMeasurements);
+
+      // Track consecutive identical temp sizes - lock after 5 times
+      const tempSize = currentMeasurements.predictedSize;
+      if (lastTempSizeRef.current === tempSize) {
+        sameTempSizeCountRef.current += 1;
+        console.log(`Same temp size count: ${sameTempSizeCountRef.current}/5 (${tempSize})`);
+        
+        if (sameTempSizeCountRef.current >= 5) {
+          console.log("Locking measurements - temp size repeated 5 times!");
+          const predictedSize = estimateSize(shoulderWidth + 2, torsoHeight); // Add 2 to shoulder
+          const finalData: MeasurementData = {
+            distance,
+            shoulderWidth,
+            torsoHeight,
+            predictedSize
+          };
+          setFinalMeasurements(finalData);
+          setIsStable(true);
+          setShowResultDialog(true);
+          console.log(`Locked: Shoulder=${shoulderWidth.toFixed(1)}, Torso=${torsoHeight.toFixed(1)}, Size=${predictedSize}`);
+        }
+      } else {
+        lastTempSizeRef.current = tempSize;
+        sameTempSizeCountRef.current = 1;
+        console.log(`New temp size detected: ${tempSize}, resetting count to 1`);
+      }
 
       // Draw measurements on canvas
       ctx.fillStyle = 'lime';
@@ -235,6 +265,8 @@ const PoseDetection = () => {
     setShowResultDialog(false);
     lastMovementTimeRef.current = Date.now();
     setTimeRemaining(STABILITY_DURATION);
+    lastTempSizeRef.current = null;
+    sameTempSizeCountRef.current = 0;
   };
 
   const handleTryAgain = () => {
@@ -307,6 +339,11 @@ const PoseDetection = () => {
               {timeRemaining > 0 && timeRemaining < STABILITY_DURATION && (
                 <li className="text-primary font-semibold">
                   • Hold still for {Math.ceil(timeRemaining / 1000)} more seconds...
+                </li>
+              )}
+              {measurements && sameTempSizeCountRef.current > 0 && (
+                <li className="text-primary font-semibold">
+                  • Size consistency: {sameTempSizeCountRef.current}/5 times
                 </li>
               )}
             </ul>
