@@ -57,27 +57,39 @@ const ColorAnalysis = () => {
       reader.onload = async () => {
         const base64Image = (reader.result as string).split(',')[1]; // Get base64 without data URL prefix
         
-        // Call Roboflow Workflow API
+        // Call Roboflow Workflow API with correct format
         const response = await fetch(
-          "https://serverless.roboflow.com/mini-project-ivta0/custom-workflow?api_key=Dj5LLV1TbP7fuv7uw0hU",
+          "https://detect.roboflow.com/infer/workflows/mini-project-ivta0/custom-workflow",
           {
             method: "POST",
             headers: {
               "Content-Type": "application/json",
             },
             body: JSON.stringify({
-              image: base64Image
+              api_key: "Dj5LLV1TbP7fuv7uw0hU",
+              inputs: {
+                image: {
+                  type: "base64",
+                  value: base64Image
+                }
+              }
             }),
           }
         );
 
+        if (!response.ok) {
+          const errorText = await response.text();
+          console.error("API Error:", response.status, errorText);
+          throw new Error(`API request failed: ${response.status}`);
+        }
+
         const result = await response.json();
         console.log("Roboflow full result:", result);
         
-        // Extract top value from result array
+        // Extract top value from result
         let topValue = "N/A";
-        if (Array.isArray(result) && result.length > 0) {
-          topValue = result[0]?.predictions?.top || "N/A";
+        if (result?.outputs && Array.isArray(result.outputs) && result.outputs.length > 0) {
+          topValue = result.outputs[0]?.predictions?.top || "N/A";
         } else if (result?.predictions?.top) {
           topValue = result.predictions.top;
         }
@@ -94,7 +106,7 @@ const ColorAnalysis = () => {
       console.error("Error analyzing image:", error);
       toast({
         title: "Error",
-        description: "Failed to analyze image. Please try again.",
+        description: error instanceof Error ? error.message : "Failed to analyze image. Please try again.",
         variant: "destructive",
       });
     } finally {
