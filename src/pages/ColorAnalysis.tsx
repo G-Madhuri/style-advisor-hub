@@ -4,8 +4,9 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Label } from "@/components/ui/label";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { ArrowLeft, Palette, Sparkles } from "lucide-react";
+import { ArrowLeft, Palette, Sparkles, Upload } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
+import { Input } from "@/components/ui/input";
 
 const ColorAnalysis = () => {
   const [features, setFeatures] = useState({
@@ -17,6 +18,9 @@ const ColorAnalysis = () => {
   const [colorPalette, setColorPalette] = useState<string[]>([]);
   const [season, setSeason] = useState("");
   const [showResult, setShowResult] = useState(false);
+  const [uploadedImage, setUploadedImage] = useState<File | null>(null);
+  const [isAnalyzingImage, setIsAnalyzingImage] = useState(false);
+  const [roboflowResult, setRoboflowResult] = useState<string | null>(null);
   const { toast } = useToast();
 
   const colorPalettes = {
@@ -24,6 +28,73 @@ const ColorAnalysis = () => {
     summer: ["#A8DADC", "#457B9D", "#1D3557", "#F1FAEE", "#E63946", "#2A9D8F"],
     autumn: ["#D2691E", "#8B4513", "#CD853F", "#DEB887", "#B22222", "#228B22"],
     winter: ["#000000", "#FFFFFF", "#8B0000", "#000080", "#800080", "#008B8B"]
+  };
+
+  const handleImageUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (file) {
+      setUploadedImage(file);
+      setRoboflowResult(null);
+    }
+  };
+
+  const handleRoboflowAnalysis = async () => {
+    if (!uploadedImage) {
+      toast({
+        title: "No Image",
+        description: "Please upload an image first.",
+        variant: "destructive",
+      });
+      return;
+    }
+
+    setIsAnalyzingImage(true);
+    try {
+      // Convert image to base64
+      const reader = new FileReader();
+      reader.readAsDataURL(uploadedImage);
+      
+      reader.onload = async () => {
+        const base64Image = reader.result as string;
+        
+        // Call Roboflow API
+        const response = await fetch(
+          "https://serverless.roboflow.com/mini-project-ivta0/custom-workflow",
+          {
+            method: "POST",
+            headers: {
+              "Content-Type": "application/json",
+            },
+            body: JSON.stringify({
+              api_key: "Dj5LLV1TbP7fuv7uw0hU",
+              inputs: {
+                image: { type: "url", value: base64Image }
+              }
+            }),
+          }
+        );
+
+        const result = await response.json();
+        console.log("Roboflow result:", result);
+        
+        const topValue = result?.predictions?.top || result?.[0]?.predictions?.top || "N/A";
+        setRoboflowResult(topValue);
+        
+        toast({
+          title: "Analysis Complete!",
+          description: `Top prediction: ${topValue}`,
+        });
+      };
+    } catch (error) {
+      console.error("Error analyzing image:", error);
+      toast({
+        title: "Error",
+        description: "Failed to analyze image. Please try again.",
+        variant: "destructive",
+      });
+    } finally {
+      setIsAnalyzingImage(false);
+    }
   };
 
   const handleAnalyze = () => {
@@ -79,8 +150,62 @@ const ColorAnalysis = () => {
       </header>
 
       <div className="container mx-auto px-4 py-6 sm:py-12">
-        <div className="max-w-2xl mx-auto">
+        <div className="max-w-2xl mx-auto space-y-6">
           
+          {/* Roboflow Image Analysis Section */}
+          <Card className="shadow-card">
+            <CardHeader className="text-center">
+              <CardTitle className="text-2xl sm:text-3xl font-bold">AI Style Analysis</CardTitle>
+              <CardDescription className="text-base sm:text-lg">
+                Upload an image to get AI-powered style recommendations
+              </CardDescription>
+            </CardHeader>
+            
+            <CardContent className="space-y-4">
+              <div className="space-y-2">
+                <Label className="text-sm font-medium">Upload Image</Label>
+                <div className="flex items-center gap-4">
+                  <Input
+                    type="file"
+                    accept="image/*"
+                    onChange={handleImageUpload}
+                    className="flex-1"
+                  />
+                  {uploadedImage && (
+                    <span className="text-sm text-muted-foreground">
+                      {uploadedImage.name}
+                    </span>
+                  )}
+                </div>
+              </div>
+
+              <Button
+                onClick={handleRoboflowAnalysis}
+                disabled={!uploadedImage || isAnalyzingImage}
+                size="lg"
+                className="w-full"
+              >
+                {isAnalyzingImage ? (
+                  <>Analyzing...</>
+                ) : (
+                  <>
+                    <Upload className="w-4 h-4 mr-2" />
+                    Analyze Style
+                  </>
+                )}
+              </Button>
+
+              {roboflowResult && (
+                <div className="bg-accent/10 rounded-lg p-4 text-center">
+                  <p className="text-sm font-medium text-muted-foreground mb-1">
+                    Top Prediction
+                  </p>
+                  <p className="text-2xl font-bold text-accent">{roboflowResult}</p>
+                </div>
+              )}
+            </CardContent>
+          </Card>
+
           {!showResult ? (
             <Card className="shadow-card">
               <CardHeader className="text-center">
