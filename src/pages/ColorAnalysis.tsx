@@ -55,29 +55,34 @@ const ColorAnalysis = () => {
       reader.readAsDataURL(uploadedImage);
       
       reader.onload = async () => {
-        const base64Image = reader.result as string;
+        const base64Image = (reader.result as string).split(',')[1]; // Get base64 without data URL prefix
         
-        // Call Roboflow API
+        // Call Roboflow Workflow API
         const response = await fetch(
-          "https://serverless.roboflow.com/mini-project-ivta0/custom-workflow",
+          "https://serverless.roboflow.com/mini-project-ivta0/custom-workflow?api_key=Dj5LLV1TbP7fuv7uw0hU",
           {
             method: "POST",
             headers: {
               "Content-Type": "application/json",
             },
             body: JSON.stringify({
-              api_key: "Dj5LLV1TbP7fuv7uw0hU",
-              inputs: {
-                image: { type: "url", value: base64Image }
-              }
+              image: base64Image
             }),
           }
         );
 
         const result = await response.json();
-        console.log("Roboflow result:", result);
+        console.log("Roboflow full result:", result);
         
-        const topValue = result?.predictions?.top || result?.[0]?.predictions?.top || "N/A";
+        // Extract top value from result array
+        let topValue = "N/A";
+        if (Array.isArray(result) && result.length > 0) {
+          topValue = result[0]?.predictions?.top || "N/A";
+        } else if (result?.predictions?.top) {
+          topValue = result.predictions.top;
+        }
+        
+        console.log("Extracted top value:", topValue);
         setRoboflowResult(topValue);
         
         toast({
